@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="dialog_title">正在下载升级包...</string>
+    <string name="dialog_app_version_tips">逸身轻升级到</string>
+    <string name="dialog_app_version_warning_net">在升级的过程中，请保持网络连接正常</string>
+    <string name="dialog_app_version_warning">请务必耐心等待进度值加载完毕</string>
+    <string name="dialog_app_progress_value">进度值：</string>
+    <string name="dialog_button_redownload">重新下载</string>
+    <string name="dialog_button_manual_installation">手动安装</string>
+
+    <dimen name="size_20">20dp</dimen>
+    <dimen name="size_18">16dp</dimen>
+
+    <color name="dialog_title_color">#666666</color>
+    <color name="dialog_version_color">#7DD8B9</color>
+    <color name="dialog_version_warning_color">#969696</color>
+</resources>
