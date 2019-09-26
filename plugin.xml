@@ -77,7 +77,7 @@
     	<source-file src="res/drawable/yishenqing_icon.png" target-dir="res/drawable"/>
     	<source-file src="res/layout/appupdate_test.xml" target-dir="res/layout"/>
     	<source-file src="res/values/alert_dialog_custom.xml" target-dir="res/values"/>
-    	<source-file src="res/values/alert_dialog_string.xml" target-dir="res/values"/>
+    	<source-file src="res/values/alert_dialog_strings.xml" target-dir="res/values"/>
 
         <framework src="com.android.support:support-v4:24.1.1+" />
     </platform>
