@@ -2,12 +2,13 @@ package com.vaenow.appupdate.android;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-//import android.content.DialogInterface.OnClickListener;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.goingtech.yishenqing.R;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -48,7 +49,8 @@ public class UpdateManager {
     private List<Version> queue = new ArrayList<Version>(1);
     private CheckUpdateThread checkUpdateThread;
     private DownloadApkThread downloadApkThread;
-
+    private AlertDialog mDownloadDialog;
+    private Button dialogbutton;
     public UpdateManager(Context context, CordovaInterface cordova) {
         this.cordova = cordova;
         this.mContext = context;
@@ -173,36 +175,20 @@ public class UpdateManager {
                 if (skipPromptDialog) {
                     mHandler.sendEmptyMessage(Constants.DOWNLOAD_CLICK_START);
                 } else {
-                    // 显示提示对话框
-//                    msgBox.showNoticeDialog(noticeDialogOnClick);
                     mHandler.sendEmptyMessage(Constants.DOWNLOAD_CLICK_START);
                     mHandler.sendEmptyMessage(Constants.VERSION_NEED_UPDATE);
                 }
             }
         } else {
             mHandler.sendEmptyMessage(Constants.VERSION_UP_TO_UPDATE);
-            // Do not show Toast
-            //Toast.makeText(mContext, getString("update_latest"), Toast.LENGTH_LONG).show();
+
         }
     }
 
-    private View.OnClickListener noticeDialogOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mHandler.sendEmptyMessage(Constants.DOWNLOAD_CLICK_START);
-        }
-    };
 
-
-  /*  private OnClickListener noticeDialogOnClick = new OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-            mHandler.sendEmptyMessage(Constants.DOWNLOAD_CLICK_START);
-        }
-    };*/
 
     private void emitNoticeDialogOnClick() {
+
         isDownloading = true;
 
         boolean skipProgressDialog = false;
@@ -226,17 +212,10 @@ public class UpdateManager {
     private View.OnClickListener downloadDialogOnClickNeu = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            //放其他地方实现
         }
     };
 
-    /*
-    private OnClickListener downloadDialogOnClickNeu = new OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            //Implemented in DownloadHandler.java
-        }
-    };*/
     /**
      * 重新下载
      * Download again
@@ -244,19 +223,17 @@ public class UpdateManager {
     private View.OnClickListener downloadDialogOnClickPos = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-        }
-    };
-
-    /*
-    private OnClickListener downloadDialogOnClickPos = new OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
+            dialogbutton = mDownloadDialog.findViewById(R.id.dialog_button_manual_installation_id);
+            dialogbutton.setBackgroundResource(R.drawable.button_circle_shape_onclick);
+            dialogbutton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
+            });
+            downloadApkThread.cancelBuildUpdate();
             mHandler.sendEmptyMessage(Constants.DOWNLOAD_CLICK_START);
         }
     };
-    */
 
     /**
      * 转到后台更新
@@ -265,25 +242,19 @@ public class UpdateManager {
     private View.OnClickListener downloadDialogOnClickNeg = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            dialogbutton = mDownloadDialog.findViewById(R.id.dialog_button_manual_installation_id);
+            dialogbutton.setBackgroundResource(R.drawable.button_circle_shape_onclick);
+            dialogbutton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
+            });
+            msgBox.closeDialogShow();
+            downloadApkThread.cancelBuildUpdate();
         }
     };
 
-    /*private OnClickListener downloadDialogOnClickNeg = new OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-            // 设置取消状态
-            //downloadApkThread.cancelBuildUpdate();
-        }
-    };*/
 
-  /*  private OnClickListener errorDialogOnClick = new OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-        }
-    };*/
 
     /**
      * 下载apk文件
@@ -292,12 +263,11 @@ public class UpdateManager {
      * @param mDownloadDialog
      */
     private void downloadApk(AlertDialog mDownloadDialog, TextView mProgress) {
+        this.mDownloadDialog = mDownloadDialog;
         LOG.d(TAG, "downloadApk" + mProgress);
-
         // 启动新线程下载软件
         downloadApkThread = new DownloadApkThread(mContext, mHandler, mProgress, mDownloadDialog, checkUpdateThread.getMHashMap(), options);
         this.cordova.getThreadPool().execute(downloadApkThread);
-         new Thread(downloadApkThread).start();
     }
 
 }

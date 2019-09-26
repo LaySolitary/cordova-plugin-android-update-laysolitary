@@ -11,11 +11,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.support.v4.content.FileProvider;
 import android.widget.TextView;
+
+import com.goingtech.yishenqing.R;
 
 import java.io.File;
 import java.util.HashMap;
@@ -33,13 +37,15 @@ public class DownloadHandler extends Handler {
     private TextView mProgress;
     /* 记录进度条数量 */
     private int progress;
+
+    private int progresstemp = 0;
     /* 下载保存路径 */
     private String mSavePath;
     /* 保存解析的XML信息 */
     private HashMap<String, String> mHashMap;
     private MsgHelper msgHelper;
     private AlertDialog mDownloadDialog;
-
+    private Button handerupdateapp;
     public DownloadHandler(Context mContext, TextView mProgress, AlertDialog mDownloadDialog, String mSavePath, HashMap<String, String> mHashMap) {
         this.msgHelper = new MsgHelper(mContext.getPackageName(), mContext.getResources());
         this.mDownloadDialog = mDownloadDialog;
@@ -54,11 +60,18 @@ public class DownloadHandler extends Handler {
             // 正在下载
             case Constants.DOWNLOAD:
                 // 设置进度条位置
-//                System.out.println(progress);
-                mProgress.setText(" "+progress);
+                if (progresstemp < progress) {
+                    mProgress.setText("" + progress + "%");
+                    progresstemp = progress;
+                    if (progress == 100) {
+                        handerupdateapp();
+                    }
+                }
+
                 break;
             case Constants.DOWNLOAD_FINISH:
-                updateMsgDialog();
+//                handerupdateapp();
+//                updateMsgDialog();
                 // 安装文件
                 installApk();
                 break;
@@ -71,13 +84,18 @@ public class DownloadHandler extends Handler {
         this.progress = progress;
     }
 
+    public void handerupdateapp() {
+        Button button= mDownloadDialog.findViewById(R.id.dialog_button_manual_installation_id);
+        button.setBackgroundResource(R.drawable.button_circle_shape_disonclick);
+        button.setOnClickListener(downloadCompleteOnClick);
+    }
+
     public void updateMsgDialog() {
         mDownloadDialog.setTitle(msgHelper.getString(MsgHelper.DOWNLOAD_COMPLETE_TITLE));
         if (mDownloadDialog.isShowing()) {
             mDownloadDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setVisibility(View.GONE); //Update in background
             mDownloadDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setVisibility(View.VISIBLE); //Install Manually
             mDownloadDialog.getButton(DialogInterface.BUTTON_POSITIVE).setVisibility(View.VISIBLE); //Download Again
-            mDownloadDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(downloadCompleteOnClick);
         }
     }
 

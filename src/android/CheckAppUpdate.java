@@ -14,17 +14,31 @@ import org.apache.cordova.BuildHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by LuoWen on 2015/10/27.
  */
 public class CheckAppUpdate extends CordovaPlugin {
     public static final String TAG = "CheckAppUpdate";
+    public static String newestAppVersion = null;
+
+    public static String  getNewestAppVersion() {
+        return newestAppVersion;
+    }
+
+    public void setNewestAppVersion(String newestAppVersion) {
+        this.newestAppVersion = newestAppVersion;
+    }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("checkAppUpdate")) {
             getUpdateManager().options(args, callbackContext);
+            JSONObject jsonObject = args.getJSONObject(1);
+            String appversion = (String) jsonObject.get("appversion");
+            setNewestAppVersion(appversion);
+
             if (verifyInstallPermission() && verifyOtherPermissions())
                 getUpdateManager().checkUpdate();
             return true;

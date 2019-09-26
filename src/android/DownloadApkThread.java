@@ -57,7 +57,7 @@ public class DownloadApkThread implements Runnable {
     public void run() {
         downloadAndInstall();
         // 取消下载对话框显示
-        // mDownloadDialog.dismiss();
+//        mDownloadDialog.dismiss();
     }
 
     public void cancelBuildUpdate() {
