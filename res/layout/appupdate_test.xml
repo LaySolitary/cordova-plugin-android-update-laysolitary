@@ -30,6 +30,7 @@
             android:textColor="@color/dialog_title_color"
             />
         <ImageView
+            android:id="@+id/dialog_cancel_id"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="17dp"
